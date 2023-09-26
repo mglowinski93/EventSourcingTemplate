@@ -1,0 +1,46 @@
+version: "3.9"
+
+networks:
+  event-sourcing-template:
+
+volumes:
+  event-sourcing-template-backend-cache:
+
+services:
+  event-sourcing-template-db:
+    restart: "no"
+    image: "postgres:15-alpine"
+    container_name: event-sourcing-template-db-tests
+    networks:
+      event-sourcing-template:
+    environment:
+      POSTGRES_PASSWORD: "event_sourcing_template_password"
+      POSTGRES_USER: "event_sourcing_template_user"
+      POSTGRES_DB: "event_sourcing_template"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  event-sourcing-template-backend:
+    restart: "no"
+    build:
+      context: ../../backend/
+      dockerfile: ../docker/tests/backend/Dockerfile
+    container_name: event-sourcing-template-backend-tests
+    depends_on:
+      - event-sourcing-template-db
+    networks:
+      event-sourcing-template:
+    volumes:
+      - "../../backend/:/app/"
+      - "./backend/run-tests.sh:/tools/run-tests.sh"
+      - "../../backend/requirements.txt:/requirements/tests.txt"
+      - "event-sourcing-template-backend-cache:/root/.cache/pip"
+    environment:
+      DATABASE_HOST: "event-sourcing-template-db"
+      DATABASE_PORT: 5432
+      DATABASE_NAME: "event_sourcing_template"
+      DATABASE_USER: "event_sourcing_template_user"
+      DATABASE_PASSWORD: "event_sourcing_template_password"
