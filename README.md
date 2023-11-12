@@ -4,6 +4,14 @@ Template for
 [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
 implementation.
 
+This repository uses
+[Event Sourcing](https://github.com/pyeventsourcing/eventsourcing)
+package to manage events and
+[Event Sourcing SqlAlchemy](https://github.com/pyeventsourcing/eventsourcing-sqlalchemy)
+to manage events persistence.
+
+Please refer to their documentation for detailed information.
+
 ## Prerequisites
 
 Running of this project locally requires the following tools to be

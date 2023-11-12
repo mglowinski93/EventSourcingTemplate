@@ -1,5 +1,4 @@
 psycopg2-binary==2.8.6
 sqlalchemy==2.0.*
 alembic==1.11.*
-pytest==7.4.*
-faker==18.13.*
+eventsourcing-sqlalchemy==0.7

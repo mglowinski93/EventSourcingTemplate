@@ -14,9 +14,9 @@ services:
     networks:
       event-sourcing-template:
     environment:
-      POSTGRES_PASSWORD: "event_sourcing_template_password"
-      POSTGRES_USER: "event_sourcing_template_user"
       POSTGRES_DB: "event_sourcing_template"
+      POSTGRES_USER: "event_sourcing_template_user"
+      POSTGRES_PASSWORD: "event_sourcing_template_password"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
@@ -36,7 +36,7 @@ services:
     volumes:
       - "../../backend/:/app/"
       - "./backend/run-tests.sh:/tools/run-tests.sh"
-      - "../../backend/requirements.txt:/requirements/tests.txt"
+      - "../../backend/requirements/:/requirements/"
       - "event-sourcing-template-backend-cache:/root/.cache/pip"
     environment:
       DATABASE_HOST: "event-sourcing-template-db"
