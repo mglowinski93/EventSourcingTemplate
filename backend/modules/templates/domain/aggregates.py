@@ -16,7 +16,11 @@ class TemplateAggregate(Aggregate):
     def __init__(
         self,
     ):
-        self.status: TemplateStatus = TemplateStatus.NEW
+        self._status: TemplateStatus = TemplateStatus.NEW
+
+    @property
+    def status(self) -> TemplateStatus:
+        return self._status
 
     @classmethod
     def create(cls, info: TemplateInfo) -> "TemplateAggregate":
@@ -27,9 +31,9 @@ class TemplateAggregate(Aggregate):
         )
 
     def start(self):
-        if self.status != TemplateStatus.NEW:
+        if self._status != TemplateStatus.NEW:
             raise StatusCantBeChanged(
-                old_status=self.status.value,
+                old_status=self._status.value,
                 new_status=TemplateStatus.IN_PROGRESS.value,
             )
 
@@ -38,9 +42,9 @@ class TemplateAggregate(Aggregate):
         )
 
     def complete(self):
-        if self.status != TemplateStatus.IN_PROGRESS:
+        if self._status != TemplateStatus.IN_PROGRESS:
             raise StatusCantBeChanged(
-                old_status=self.status.value,
+                old_status=self._status.value,
                 new_status=TemplateStatus.COMPLETED.value,
             )
 

@@ -15,9 +15,9 @@ class TemplateCreated(AggregateCreated):
 
 class TemplateStarted(AggregateEvent):
     def apply(self, aggregate: "TemplateAggregate"):
-        aggregate.status = TemplateStatus.IN_PROGRESS
+        aggregate._status = TemplateStatus.IN_PROGRESS
 
 
 class TemplateCompleted(AggregateEvent):
     def apply(self, aggregate: "TemplateAggregate"):
-        aggregate.status = TemplateStatus.COMPLETED
+        aggregate._status = TemplateStatus.COMPLETED
