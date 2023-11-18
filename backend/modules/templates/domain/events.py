@@ -12,12 +12,16 @@ actions that happens in response to the events (apply methods in particular even
 class TemplateCreated(AggregateCreated):
     info: TemplateInfo
 
+    def apply(self, aggregate: "TemplateAggregate"):
+        aggregate._status = TemplateStatus.NEW
+        aggregate._info = self.info
+
 
 class TemplateStarted(AggregateEvent):
     def apply(self, aggregate: "TemplateAggregate"):
-        aggregate.status = TemplateStatus.IN_PROGRESS
+        aggregate._status = TemplateStatus.IN_PROGRESS
 
 
 class TemplateCompleted(AggregateEvent):
     def apply(self, aggregate: "TemplateAggregate"):
-        aggregate.status = TemplateStatus.COMPLETED
+        aggregate._status = TemplateStatus.COMPLETED

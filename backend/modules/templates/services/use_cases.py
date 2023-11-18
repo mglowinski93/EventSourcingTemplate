@@ -5,6 +5,7 @@ from .exceptions import (
     FailedToSaveTemplate,
     FailedToUpdateTemplate,
 )
+from .mappers import map_template_aggregate_to_template_dto
 from ..dto import Template as TemplateDto
 from ..domain.value_objects import TEMPLATE_ID_TYPE, TemplateInfo, TemplateStatus
 from ..persistence import read_model
@@ -49,7 +50,7 @@ def start_template(template_id: TEMPLATE_ID_TYPE) -> TemplateDto:
             read_model.update_template(
                 session=session,
                 template_id=template_id,
-                status=TemplateStatus.STARTED,
+                status=TemplateStatus.IN_PROGRESS,
             )
         except ReadModelRecordNotFound as err:
             raise TemplateDoesntExist(
@@ -60,7 +61,7 @@ def start_template(template_id: TEMPLATE_ID_TYPE) -> TemplateDto:
                 f"Failed to update read model for template with ID: '{template_id}'"
             ) from err
 
-        return templates.get(template_id)
+        return map_template_aggregate_to_template_dto(templates.get(template_id))
 
 
 def complete_template(template_id: TEMPLATE_ID_TYPE) -> TemplateDto:
@@ -82,11 +83,11 @@ def complete_template(template_id: TEMPLATE_ID_TYPE) -> TemplateDto:
                 f"Failed to update read model for template with ID: '{template_id}'"
             ) from err
 
-        return templates.get(template_id)
+        return map_template_aggregate_to_template_dto(templates.get(template_id))
 
 
 def get_template(template_id: TEMPLATE_ID_TYPE) -> TemplateDto:
-    return templates.get(template_id)
+    return map_template_aggregate_to_template_dto(templates.get(template_id))
 
 
 def get_templates() -> list[TemplateDto]:
