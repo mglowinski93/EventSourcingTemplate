@@ -16,11 +16,16 @@ class TemplateAggregate(Aggregate):
     def __init__(
         self,
     ):
-        self._status: TemplateStatus = TemplateStatus.NEW
+        self._status: TemplateStatus = None
+        self._info: TemplateInfo = None
 
     @property
     def status(self) -> TemplateStatus:
         return self._status
+
+    @property
+    def info(self) -> TemplateInfo:
+        return self._info
 
     @classmethod
     def create(cls, info: TemplateInfo) -> "TemplateAggregate":

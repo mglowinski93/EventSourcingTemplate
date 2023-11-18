@@ -4,7 +4,6 @@ from eventsourcing.persistence import Transcoder, Transcoding
 from persistence_layer import PersistentEventApplication
 from ..domain.value_objects import TEMPLATE_ID_TYPE, TemplateInfo
 from ..domain.aggregates import TemplateAggregate
-from ..dto import Template as TemplateDto
 from .exceptions import TemplateDoesntExist
 
 
@@ -62,16 +61,10 @@ class Templates(PersistentEventApplication):
         template.complete()
         self.save(template)
 
-    def get(self, template_id) -> TemplateDto:
+    def get(self, template_id) -> TemplateAggregate:
         try:
-            template = self.repository.get(template_id)
+            return self.repository.get(template_id)
         except AggregateNotFound as err:
             raise TemplateDoesntExist(
                 f"Failed to recreate aggregate for template with ID: '{template_id}'"
             ) from err
-
-        return TemplateDto(
-            id=template.id,
-            info=template.info,
-            status=template.status,
-        )
