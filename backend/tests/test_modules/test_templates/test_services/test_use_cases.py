@@ -3,7 +3,14 @@ from sqlalchemy.orm import Session
 
 from modules.templates.domain.value_objects import TEMPLATE_ID_TYPE, TemplateStatus
 from modules.templates.dto import Template as TemplateDto
-from modules.templates.services import exceptions, use_cases
+from modules.templates.services import (
+    exceptions,
+    create_template,
+    get_template,
+    get_templates,
+    start_template,
+    complete_template,
+)
 from persistence_layer import TemplateReadModel
 from .. import fakers
 
@@ -13,13 +20,13 @@ def test_create_template_creates_template(session: Session):
     template_info = fakers.fake_template_info()
 
     # When
-    template_id = use_cases.create_template(
+    template_id = create_template(
         info=template_info,
     )
 
     # Then
     assert isinstance(template_id, TEMPLATE_ID_TYPE)
-    template = use_cases.get_template(template_id=template_id)
+    template = get_template(template_id=template_id)
     assert template_id == template.id
     assert template.status == TemplateStatus.NEW
     assert get_read_model_instance(session=session, template_id=template_id) is not None
@@ -29,7 +36,7 @@ def test_start_template_starts_template(
     session: Session, template_environment: TemplateDto
 ):
     # When
-    template = use_cases.start_template(template_id=template_environment.id)
+    template = start_template(template_id=template_environment.id)
 
     # Then
     assert isinstance(template, TemplateDto)
@@ -45,7 +52,7 @@ def test_start_template_raises_exception_when_specified_id_doesnt_exist(
 ):
     # When and then
     with pytest.raises(exceptions.TemplateDoesntExist):
-        use_cases.start_template(
+        start_template(
             template_id=fakers.fake_template_id(),
         )
 
@@ -58,7 +65,7 @@ def test_start_template_raises_exception_when_specified_id_read_model_doesnt_exi
 
     # When and then
     with pytest.raises(exceptions.TemplateDoesntExist):
-        use_cases.start_template(
+        start_template(
             template_id=fakers.fake_template_id(),
         )
 
@@ -67,10 +74,10 @@ def test_complete_template_completes_template(
     session: Session, template_environment: TemplateDto
 ):
     # Given
-    use_cases.start_template(template_id=template_environment.id)
+    start_template(template_id=template_environment.id)
 
     # When
-    template = use_cases.complete_template(template_id=template_environment.id)
+    template = complete_template(template_id=template_environment.id)
 
     # Then
     assert isinstance(template, TemplateDto)
@@ -86,7 +93,7 @@ def test_complete_template_raises_exception_when_specified_id_doesnt_exist(
 ):
     # When and then
     with pytest.raises(exceptions.TemplateDoesntExist):
-        use_cases.complete_template(
+        complete_template(
             template_id=fakers.fake_template_id(),
         )
 
@@ -99,7 +106,7 @@ def test_complete_template_raises_exception_when_specified_id_read_model_doesnt_
 
     # When and then
     with pytest.raises(exceptions.TemplateDoesntExist):
-        use_cases.start_template(
+        start_template(
             template_id=fakers.fake_template_id(),
         )
 
@@ -108,7 +115,7 @@ def test_get_template_returns_data_when_specified_id_exists(
     template_environment: TemplateDto,
 ):
     # When
-    template = use_cases.get_template(template_id=template_environment.id)
+    template = get_template(template_id=template_environment.id)
 
     # Then
     assert isinstance(template, TemplateDto)
@@ -117,14 +124,14 @@ def test_get_template_returns_data_when_specified_id_exists(
 def test_get_template_raises_exception_when_specified_id_doesnt_exist():
     # When and then
     with pytest.raises(exceptions.TemplateDoesntExist):
-        use_cases.get_template(
+        get_template(
             template_id=fakers.fake_template_id(),
         )
 
 
 def test_get_templates_no_results_when_no_records_in_database():
     # When
-    results = use_cases.get_templates()
+    results = get_templates()
 
     # Then
     assert isinstance(results, list)
@@ -135,7 +142,7 @@ def test_get_templates_returns_results_when_records_in_database(
     template_environment: TemplateDto,
 ):
     # When
-    results = use_cases.get_templates()
+    results = get_templates()
 
     # Then
     assert isinstance(results, list)

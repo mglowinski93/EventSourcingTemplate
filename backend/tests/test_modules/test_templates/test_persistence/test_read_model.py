@@ -3,14 +3,18 @@ from sqlalchemy.orm import Session
 
 from modules.common.exceptions import ReadModelRecordNotFound
 from modules.templates.dto import Template as TemplateDto
-from modules.templates.persistence import read_model
+from modules.templates.persistence.read_model import (
+    get_templates,
+    save_template,
+    update_template,
+)
 from persistence_layer import TemplateReadModel
 from .. import factories, fakers
 
 
 def test_get_templates_returns_no_results_when_no_records_in_database(session: Session):
     # When
-    results = read_model.get_templates(session)
+    results = get_templates(session)
 
     # Then
     assert isinstance(results, list)
@@ -24,7 +28,7 @@ def test_get_templates_returns_results_when_records_in_database(
     template = template_read_model_factory()
 
     # When
-    results = read_model.get_templates(session)
+    results = get_templates(session)
 
     # Then
     assert isinstance(results, list)
@@ -40,7 +44,7 @@ def test_save_templates_creates_record_in_database(
     template = fakers.fake_template_dto()
 
     # When
-    results = read_model.save_template(session=session, template=template)
+    results = save_template(session=session, template=template)
 
     # Then
     assert results is None
@@ -57,7 +61,7 @@ def test_update_templates_updates_record_in_database(
     new_status = fakers.fake_template_status(exclude=template.status)
 
     # When
-    results = read_model.update_template(
+    results = update_template(
         session=session, template_id=template.id, status=new_status
     )
 
@@ -71,7 +75,7 @@ def test_template_application_complete_raises_exception_when_no_record_found(
 ):
     # When and then
     with pytest.raises(ReadModelRecordNotFound):
-        read_model.update_template(
+        update_template(
             session=session,
             template_id=fakers.fake_template_id(),
             status=fakers.fake_template_status(),

@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 
 from modules.templates.domain.aggregates import TemplateAggregate
 from modules.templates.dto import Template as TemplateDto
-from modules.templates.services import use_cases
 from modules.templates.services.applications import Templates as TemplateApplication
+from modules.templates.services.use_cases import create_template, get_template
 from persistence_layer import TemplateReadModel, get_session
 from . import fakers, factories
 
@@ -39,5 +39,5 @@ def template_environment(
     template_application: TemplateApplication,
     template_read_model_factory: type[factories.TemplateReadModelFactory],
 ) -> TemplateDto:
-    template_id = use_cases.create_template(fakers.fake_template_info())
-    return use_cases.get_template(template_id=template_id)
+    template_id = create_template(fakers.fake_template_info())
+    return get_template(template_id=template_id)
