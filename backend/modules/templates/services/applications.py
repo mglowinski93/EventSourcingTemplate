@@ -28,6 +28,8 @@ class TemplateInfoTranscoder(Transcoding):
         )
 
 
+# Application class should be named after the subdomain that its domain model supports,
+# or the bounded context that its domain model constitutes.
 class Templates(PersistentEventApplication):
     def register_transcodings(self, transcoder: Transcoder):
         super().register_transcodings(transcoder)
